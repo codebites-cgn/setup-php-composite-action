@@ -1,0 +1,67 @@
+name: "Setup PHP & Install Composer Dependencies"
+description: "Sets up PHP with Composer and installs required extensions and dependencies with caching enabled."
+author: "Marco Kretz (codebites GbR)"
+
+inputs:
+  php-version:
+    description: "PHP version to use"
+    required: true
+    default: "8.2"
+
+  php-extensions:
+    description: "List of PHP extensions to install"
+    required: false
+
+  caching:
+    description: "Enable caching"
+    required: false
+    default: true
+
+  composer-params:
+    description: "Parameters to pass to composer install"
+    required: false
+    default: "-q --no-ansi --no-progress --prefer-dist --no-interaction"
+
+runs:
+  using: "composite"
+  steps:
+    # Setup PHP extensions caching
+    - name: Setup PHP extensions cache environment
+      if: inputs.caching
+      id: cdb-cache-exts
+      uses: shivammathur/cache-extensions@v1
+      with:
+        php-version: ${{ inputs.php-version }}
+        extensions: ${{ inputs.php-extensions }}
+        key: php-${{ inputs.php-version }}-exts
+
+    - name: Cache PHP Extensions
+      if: inputs.caching
+      id: cdb-cache-exts-store
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.cdb-cache-exts.outputs.dir }}
+        key: ${{ steps.cdb-cache-exts.outputs.key }}
+        restore-keys: ${{ steps.cdb-cache-exts.outputs.key }}
+
+    # Setup PHP & Composer
+    - name: "Set up PHP ${{ inputs.php-version }}"
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: "${{ inputs.php-version }}"
+        extensions: ${{ inputs.php-extensions }}
+        tools: composer
+
+    # Install PHP dependencies (with caching enabled)
+    - name: Cache Vendor
+      if: inputs.caching
+      id: cdb-cache-vendor-store
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+
+    - name: Install dependencies
+      shell: bash
+      if: inputs.caching && steps.cdb-cache-vendor-store.outputs.cache-hit != 'true'
+      run: composer install ${{ inputs.composer-params }}
