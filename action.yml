@@ -27,7 +27,7 @@ runs:
   steps:
     # Setup PHP extensions caching
     - name: Setup PHP extensions cache environment
-      if: inputs.caching
+      if: inputs.caching && (inputs.php-extensions && inputs.php-extensions != '')
       id: cdb-cache-exts
       uses: shivammathur/cache-extensions@v1
       with:
@@ -36,7 +36,7 @@ runs:
         key: php-${{ inputs.php-version }}-exts
 
     - name: Cache PHP Extensions
-      if: inputs.caching
+      if: inputs.caching && (inputs.php-extensions && inputs.php-extensions != '')
       id: cdb-cache-exts-store
       uses: actions/cache@v3
       with:
