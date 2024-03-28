@@ -30,7 +30,7 @@ jobs:
   ecs:
     steps:
       - uses: actions/checkout@v4
-      - uses: codebites-cgn/setup-php-composite-action@v0.1
+      - uses: codebites-cgn/setup-php-composite-action@v0.2
         with:
           php-version: "8.2"
           php-extensions: sqlsrv, pdo_sqlsrv
