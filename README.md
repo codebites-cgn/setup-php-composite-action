@@ -8,6 +8,8 @@ On our projects this action reduced the execution time for a simple Symfony proj
 
 I have not been able to test any matrix configurations or different OSes. So if you have problems or want to assist, don't hesitate to open an issue or PR!
 
+**Warning: This does not support authentication yet!**
+
 ## Usage
 
 Available config parameters:
