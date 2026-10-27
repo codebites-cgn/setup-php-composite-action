@@ -38,7 +38,7 @@ runs:
     - name: Cache PHP Extensions
       if: inputs.caching && (inputs.php-extensions && inputs.php-extensions != '')
       id: cdb-cache-exts-store
-      uses: actions/cache@v3
+      uses: actions/cache@v6
       with:
         path: ${{ steps.cdb-cache-exts.outputs.dir }}
         key: ${{ steps.cdb-cache-exts.outputs.key }}
@@ -56,7 +56,7 @@ runs:
     - name: Cache Vendor
       if: inputs.caching
       id: cdb-cache-vendor-store
-      uses: actions/cache@v3
+      uses: actions/cache@v6
       with:
         path: vendor
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
